@@ -1,0 +1,231 @@
+Script started on Tue 11 Apr 2017 01:40:43 PM EDT
+jusvic@pclab32:~/cs240/hw5$ ls -l
+total 1462
+-rwxr-xr-x  1 jusvic cs240-1G    7524 Apr 11 13:39 explore
+-rw-r--r--  1 jusvic cs240-1G    1335 Apr  8 18:04 explore.c
+-rw-r--r--  1 jusvic cs240-1G   37376 Mar 30 12:01 hw5.doc
+-rw-r--r--+ 1 jusvic cs240-1G    1151 Apr 11 13:19 lineholder.c
+-rw-r--r--+ 1 jusvic cs240-1G     130 Apr 11 12:53 lineholder.h
+-rw-r--r--  1 jusvic cs240-1G 1393072 Apr 11 13:24 lineholder.h.gch
+-rw-r--r--  1 jusvic cs240-1G    3612 Apr 11 13:24 lineholder.o
+-rw-r--r--+ 1 jusvic cs240-1G     349 Apr 11 12:53 makefile
+-rw-r--r--  1 jusvic cs240-1G     854 Apr 10 16:36 makefile2
+-rw-r--r--  1 jusvic cs240-1G     523 Apr  8 19:13 memo.txt
+-rw-r--r--  1 jusvic cs240-1G    1060 Mar 30 12:01 sample_typescript.txt
+-rwxr-xr-x  1 jusvic cs240-1G    9776 Apr 11 13:24 tail
+-rw-r--r--  1 jusvic cs240-1G       0 Apr 11 12:26 tail0.in
+-rw-r--r--  1 jusvic cs240-1G     145 Apr 11 12:26 tail1.in
+-rw-r--r--  1 jusvic cs240-1G     145 Apr 11 12:57 tail1.out
+-rw-r--r--  1 jusvic cs240-1G     198 Apr 11 12:26 tail2.in
+-rw-r--r--  1 jusvic cs240-1G     219 Apr 11 12:26 tail3.in
+-rw-r--r--  1 jusvic cs240-1G     447 Apr 11 12:26 tail4.in
+-rw-r--r--  1 jusvic cs240-1G       0 Apr 11 13:00 tail4.out
+-rw-r--r--+ 1 jusvic cs240-1G    1132 Apr 11 13:24 tail.c
+-rw-r--r--  1 jusvic cs240-1G    3144 Apr 11 13:24 tail.o
+drwxr-sr-x  2 jusvic cs240-1G     512 Apr 11 12:26 temp
+-rw-r--r--  1 jusvic cs240-1G    4336 Apr 11 13:40 typescript
+-rw-r--r--  1 jusvic cs240-1G       0 Apr 11 13:40 typescript2
+jusvic@pclab32:~/cs240/hw5$ cat tail.c
+/* Justin Victoria
+ * 04/08/2017
+ * Professor Xiaohui Liang
+ * tail.c
+ *
+ * Pseudocode:
+ * Interprets the command line argument.
+ * Calls init_lineholder(int nlines) with the number from the command line
+ * Does a loop calling getline and insert_line(char *line).
+ * When getline returns 0 (indicating EOF on stdin), it calls print_lines().
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "lineholder.h"
+
+int getline1(char *line, int limit);
+
+int main(int argc, char *argv[]) {
+    //interprets the command line argument
+
+    int nline;
+    char line[MAXLEN];
+
+    if (argc == 1) { nline = 10; }
+    else if (argc > 1) { nline = atoi((++argv)[0] + 1); }
+
+    //call init_lineholder(int nlines)
+    init_lineholder(nline);
+
+    //loop calling getline
+    while (getline1(line, MAXLINE) > 0) { insert_line(line); }
+
+    //print lines
+    print_lines();
+
+    return 1;
+}
+
+int getline1(char s[], int lim) {
+    int c, i;
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; i++) {
+        s[i] = c;
+    }
+    if (c == '\n') {
+        s[i] = c;
+        i++;
+    }
+    s[i] = '\0';
+    return i;
+}
+jusvic@pclab32:~/cs240/hw5$ cat lineholder.c
+/* Justin Victoria
+ * 04/08/2017
+ * Professor Xiaohui Liang
+ * lineholder.c
+ *
+ * Pseudocode:
+ * contains a static array of pointers for lines.
+ * Implements init_lineholder, insert_line, and print_lines.
+ * Init_lineholder initializes the "first" slot and related variables.
+ * Insert_line adds a line to the array.
+ * It must allocate memory for the new line.
+ * It must free the memory for a line no longer needed, if any.
+ * Print_lines prints the lines in the array and frees the memory for them.
+ */
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "lineholder.h" 
+
+static char *ptr[MAXLINE];
+static int prime, lines;
+
+void init_lineholder(int n) {
+	if (n > MAXLINE) { lines = MAXLINE; }
+	else { lines = n; }
+	for (int i = 0; i < lines; i++) { ptr[i] = NULL; }
+}
+
+void insert_line(char *line) {
+	if (prime == lines) { prime = 0; }
+	free((void*) ptr[prime]);
+	ptr[prime] = (char*) malloc(strlen(line) + 1);
+	strcpy(ptr[prime++], line);
+}
+
+void print_lines(void) {
+	if (lines == 0) { return; }
+	int i = prime;
+	do {
+		if (ptr[i] != NULL) { printf("%s", ptr[i]); }
+		free(ptr[i]);
+		i = (i + 1) % lines;
+	} while(i != prime);
+}
+jusvic@pclab32:~/cs240/hw5$ cat lineholder.h
+#define MAXLINE 1000
+#define MAXLEN 2000
+
+void init_lineholder(int nlines);
+void insert_line(char *line);
+void print_lines(void);
+jusvic@pclab32:~/cs240/hw5$ cat makefile
+# Justin Victoria
+# Professor Xiaohui Liang
+# 04/10/2017
+# makefile for hw5
+
+cc = gcc
+CFLAGS = -m32
+
+all: tail
+
+tail: tail.o lineholder.o
+	$(cc) $(CFLAGS) -g -o tail tail.o lineholder.o
+tail.o: tail.c lineholder.h
+	$(cc) $(CFLAGS) -g -c tail.c lineholder.h
+lineholder.o: lineholder.c
+	$(cc) $(CFLAGS) -g -c lineholder.c lineholder.h
+
+clean:
+	rm *.o
+jusvic@pclab32:~/cs240/hw5$ cat temp/[K[K[Kst0.[K[K[K[K[K
+tail         tail1.in     tail2.in     tail4.in     tail.c       temp/        typescript2  
+tail0.in     tail1.out    tail3.in     tail4.out    tail.o       typescript   
+jusvic@pclab32:~/cs240/hw5$ cat t[Kai[K[Ktail0.in 
+jusvic@pclab32:~/cs240/hw5$ cat tail1.in 
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. (less than 10 lines)
+jusvic@pclab32:~/cs240/hw5$ cat tail2.in
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. to come to the
+8. aid of their country.
+9. Now is the time
+10. (10 lines)
+jusvic@pclab32:~/cs240/hw5$ cat tail3.in
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. to come to the
+8. aid of their country.
+9. Now is the time
+10. for all good men
+11. (11 lines)
+jusvic@pclab32:~/cs240/hw5$ cat tail4.in
+1. Now is the time
+2. for all good men
+3. to come to the
+4. aid of their country.
+5. Now is the time
+6. for all good men
+7. to come to the
+8. aid of their country.
+9. Now is the time
+10. for all good men
+11. to come to the
+12. aid of their country.
+13. Now is the time
+14. for all good men
+15. to come to the
+16. aid of their country.
+17. Now is the time
+18. for all good men
+19. to come to the
+20. aid of their country.
+21. (twice as many lines)
+jusvic@pclab32:~/cs240/hw5$ make -f makefile
+make: Nothing to be done for 'all'.
+jusvic@pclab32:~/cs240/hw5$ ./ [Ktail < tail1[K[K[K[K[K[K[K[K -2 < tail1.in > tail1.out
+jusvic@pclab32:~/cs240/hw5$ cat tail1.out
+6. for all good men
+7. (less than 10 lines)
+jusvic@pclab32:~/cs240/hw5$ cat tail1.out[19@./tail -2 < tail1.in >[C[C[C[C[C[C[C[C[C[C[1P[1@3[C[C[C[C[C[C[C[C[1P[1@2[C[C[C[C[C[C[C[C[C[C[C[1P.out2.out
+jusvic@pclab32:~/cs240/hw5$ cat tail2.out
+8. aid of their country.
+9. Now is the time
+10. (10 lines)
+jusvic@pclab32:~/cs240/hw5$ cat tail2.out[19@./tail -3 < tail2.in >[C[C[C[C[C[C[C[C[C[C[1P[1@4[C[C[C[C[C[C[C[C[2@^?[2P[1P[1@3[C[C[C[C[C[C[C[C[C[C[C[1P.out3.out
+jusvic@pclab32:~/cs240/hw5$ cat tail.ou[K[K[K3.out
+8. aid of their country.
+9. Now is the time
+10. for all good men
+11. (11 lines)
+jusvic@pclab32:~/cs240/hw5$ exit
+exit
+
+Script done on Tue 11 Apr 2017 01:46:01 PM EDT

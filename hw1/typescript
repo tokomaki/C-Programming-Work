@@ -1,0 +1,22 @@
+Script started on Thu 26 Jan 2017 04:28:55 PM EST
+jusvic@itserver6:~/cs240/hw1$ ls -l
+total 49
+lrwxrwxrwx  1 jusvic cs240-1G    36 Jan 25 00:01 cs240_hw1 -> /courses/cs240/s17/xiaohui/GROUP/hw1
+-rwxr-xr-x  1 jusvic cs240-1G  7344 Jan 26 16:15 hello
+-rw-r--r--+ 1 jusvic cs240-1G    78 Jan 26 16:15 hello.c
+-rw-r-----  1 jusvic cs240-1G 39424 Jan 25 00:02 hw1.doc
+-rw-r--r--  1 jusvic cs240-1G     0 Jan 26 16:28 typescript
+jusvic@itserver6:~/cs240/hw1$ cat hello.c
+#include <stdio.h>
+
+int main() {
+   printf("Hello, world!\n");
+   return 0;
+}
+jusvic@itserver6:~/cs240/hw1$ gcc -m32 -o hello hello.c
+jusvic@itserver6:~/cs240/hw1$ .l[K/hello
+Hello, world!
+jusvic@itserver6:~/cs240/hw1$ exit
+exit
+
+Script done on Thu 26 Jan 2017 04:30:12 PM EST

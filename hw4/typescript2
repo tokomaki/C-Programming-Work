@@ -1,0 +1,181 @@
+Script started on Wed 22 Mar 2017 05:10:26 PM EDT
+jusvic@itserver6:~/cs240/hw4$ make clean -f makefile2
+rm *.o
+jusvic@itserver6:~/cs240/hw4$ make -f makefile2
+cc -m32    -c -o main.o main.c
+cc -m32    -c -o getop.o getop.c
+cc -m32    -c -o stack.o stack.c
+cc -m32    -c -o getch.o getch.c
+gcc -m32  -g -o calcit main.o getop.o stack.o getch.o
+jusvic@itserver6:~/cs240/hw4$ cat getop.c
+/* 
+ * 03/22/2017
+ * getop.c
+ *
+ * Pseudocode:
+ * while get() is not blank or tab and assigned
+ * to s[0] and c:
+ *   check that c is not a number
+ *   collect integer part in string
+ *   collect fractional part in string
+ *
+ * gets next token: operator or numeric operand
+ */
+
+#include <stdio.h>
+#include <ctype.h>
+#include "calc.h"
+
+int getop(char s[])
+{
+    int i, c;
+
+    while ((s[0] = c = getch()) == ' ' || c == '\t')
+	;
+
+    s[1] = '\0';
+
+    if (!isdigit(c) && c != '.')
+      return c;  /* not a number */
+
+    /* collect integer part in string s */
+    i = 0;
+    if (isdigit(c))
+      while (isdigit(s[++i] = c = getch()))
+	    ;
+
+    /* collect fractional part in string s */
+    if (c == '.')
+      while (isdigit(s[++i] = c = getch()))
+	;
+    
+    s[i] = '\0';
+    if (c != EOF)
+      ungetch(c);
+    
+    return NUMBER;
+}
+
+
+jusvic@itserver6:~/cs240/hw4$ vim getop.c
+[?1049h[?1h=[2;1H▽[6n[2;1H  [1;1H]11;?[1;52r[?12;25h[?12l[?25h[27m[23m[m[H[2J[?25l[52;1H"getop.c" 49L, 840C[>c[27m[23m[m[H[2J[1;1H[93m  1 [m[96m/* [m
+[93m  2 [m[96m * 03/22/2017[m
+[93m  3 [m[96m * getop.c[m
+[93m  4 [m[96m *[m
+[93m  5 [m[96m * Pseudocode:[m
+[93m  6 [m[96m * while get() is not blank or tab and assigned[m
+[93m  7 [m[96m * to s[0] and c:[m
+[93m  8 [m[96m *   check that c is not a number[m
+[93m  9 [m[96m *   collect integer part in string[m
+[93m 10 [m[96m *   collect fractional part in string[m
+[93m 11 [m[96m *[m
+[93m 12 [m[96m * gets next token: operator or numeric operand[m
+[93m 13 [m[96m */[m
+[93m 14 
+ 15 [m[38;5;81m#include [m[95m<stdio.h>[m
+[93m 16 [m[38;5;81m#include [m[95m<ctype.h>[m
+[93m 17 [m[38;5;81m#include [m[95m"calc.h"[m
+[93m 18 
+ 19 [m[38;5;121mint[m getop([38;5;121mchar[m s[])
+[93m 20 [m{
+[93m 21 [m    [38;5;121mint[m i, c;
+[93m 22 
+ 23 [m    [93mwhile[m ((s[[95m0[m] = c = getch()) == [95m' '[m || c == [38;5;224m'\t'[m)
+[93m 24 [m[8C;
+[93m 25 
+ 26 [m    s[[95m1[m] = [38;5;224m'\0'[m;
+[93m 27 
+ 28 [m    [93mif[m (!isdigit(c) && c != [95m'.'[m)
+[93m 29 [m      [93mreturn[m c;  [96m/* not a number */[m
+[93m 30 
+ 31 [m    [96m/* collect integer part in string s */[m
+[93m 32 [m    i = [95m0[m;
+[93m 33 [m    [93mif[m (isdigit(c))
+[93m 34 [m      [93mwhile[m (isdigit(s[++i] = c = getch()))
+[93m 35 [m[12C;
+[93m 36 
+ 37 [m    [96m/* collect fractional part in string s */[m
+[93m 38 [m    [93mif[m (c == [95m'.'[m)
+[93m 39 [m      [93mwhile[m (isdigit(s[++i] = c = getch()))
+[93m 40 [m[8C;
+[93m 41 
+ 42 [m    s[i] = [38;5;224m'\0'[m;
+[93m 43 [m    [93mif[m (c != [95mEOF[m)
+[93m 44 [m      ungetch(c);
+[93m 45 
+ 46 [m    [93mreturn[m NUMBER;
+[93m 47 [m}
+[93m 48 
+ 49 [m
+[94m~                                                                                             [51;1H~                                                                                             [m[52;77H1,1[11CAll"getop.c" 49L, 840C[57C   [11C   [1;5H[?12l[?25hP+q436f\P+q6b75\P+q6b64\P+q6b72\P+q6b6c\P+q2332\P+q2334\P+q2569\P+q2a37\P+q6b31\[?25l[52;77H1,2[11CAll[1;6H[?12l[?25h[?25l[52;79H3[1;7H[?12l[?25h[?25l[52;1H[1m-- INSERT --[m[52;13H[K[52;77H1,3[11CAll[1;7H[?12l[?25h[?25l[52;79H4[1;8H[?12l[?25h[?25l[96mJ[m[52;79H5[1;9H[?12l[?25h[?25l[96mu[m[52;79H6[1;10H[?12l[?25h[?25l[96ms[m[52;79H7[1;11H[?12l[?25h[?25l[96mt[m[52;79H8[1;12H[?12l[?25h[?25l[96mi[m[52;79H9[1;13H[?12l[?25h[?25l[96mn[m[52;79H10[1;14H[?12l[?25h[?25l[96m [m[52;80H1[1;15H[?12l[?25h[?25l[96mV[m[52;80H2[1;16H[?12l[?25h[?25l[96mi[m[52;80H3[1;17H[?12l[?25h[?25l[96mc[m[52;80H4[1;18H[?12l[?25h[?25l[96mtc[m[52;80H6[1;20H[?12l[?25h[?25l[96mo[m[52;80H7[1;21H[?12l[?25h[?25l[96mr[m[52;80H8[1;22H[?12l[?25h[?25l[1;21H[K[52;80H7[1;21H[?12l[?25h[?25l[1;20H[K[52;80H6[1;20H[?12l[?25h[?25l[1;19H[K[52;80H5[1;19H[?12l[?25h[?25l[96mo[m[52;80H6[1;20H[?12l[?25h[?25l[96mr[m[52;80H7[1;21H[?12l[?25h[?25l[96mi[m[52;80H8[1;22H[?12l[?25h[?25l[96ma[m[52;80H9[1;23H[?12l[?25h[52;1H[K[1;22H[?25l[52;77H1,18[10CAll[1;22H[?12l[?25h[?25l[52;77H[K[52;1H:[?12l[?25hw[?25l[?12l[?25hq[?25l[?12l[?25h[?25l"getop.c" 49L, 855C written
+[?1l>[?12l[?25h[?1049ljusvic@itserver6:~/cs240/hw4$ cat getop.c
+/* Justin Victoria
+ * 03/22/2017
+ * getop.c
+ *
+ * Pseudocode:
+ * while get() is not blank or tab and assigned
+ * to s[0] and c:
+ *   check that c is not a number
+ *   collect integer part in string
+ *   collect fractional part in string
+ *
+ * gets next token: operator or numeric operand
+ */
+
+#include <stdio.h>
+#include <ctype.h>
+#include "calc.h"
+
+int getop(char s[])
+{
+    int i, c;
+
+    while ((s[0] = c = getch()) == ' ' || c == '\t')
+	;
+
+    s[1] = '\0';
+
+    if (!isdigit(c) && c != '.')
+      return c;  /* not a number */
+
+    /* collect integer part in string s */
+    i = 0;
+    if (isdigit(c))
+      while (isdigit(s[++i] = c = getch()))
+	    ;
+
+    /* collect fractional part in string s */
+    if (c == '.')
+      while (isdigit(s[++i] = c = getch()))
+	;
+    
+    s[i] = '\0';
+    if (c != EOF)
+      ungetch(c);
+    
+    return NUMBER;
+}
+
+
+jusvic@itserver6:~/cs240/hw4$ make -f makefile2
+cc -m32    -c -o getop.o getop.c
+gcc -m32  -g -o calcit main.o getop.o stack.o getch.o
+jusvic@itserver6:~/cs240/hw4$ touch calc.h
+jusvic@itserver6:~/cs240/hw4$ make -f makefile2
+cc -m32    -c -o main.o main.c
+cc -m32    -c -o getop.o getop.c
+gcc -m32  -g -o calcit main.o getop.o stack.o getch.o
+jusvic@itserver6:~/cs240/hw4$ de[Kiff -w makefile makefile2
+24d23
+< 		$(cc) $(CFLAGS) -c -o main.o main.c
+26d24
+< 		$(cc) $(CFLAGS) -c -o getop.o getop.c
+28d25
+< 		$(cc) $(CFLAGS) -c -o stack.o stack.c
+30d26
+< 		$(cc) $(CFLAGS) -c -o getch.o getch.c
+jusvic@itserver6:~/cs240/hw4$ exit
+exit
+
+Script done on Wed 22 Mar 2017 05:13:44 PM EDT

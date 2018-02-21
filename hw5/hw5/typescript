@@ -1,0 +1,158 @@
+Script started on Tue 11 Apr 2017 01:39:28 PM EDT
+jusvic@pclab32:~/cs240/hw5$ cat ex[K[K[K[K[K[Kls -l
+total 1457
+-rwxr-xr-x  1 jusvic cs240-1G    7524 Apr  8 18:04 explore
+-rw-r--r--  1 jusvic cs240-1G    1335 Apr  8 18:04 explore.c
+-rw-r--r--  1 jusvic cs240-1G   37376 Mar 30 12:01 hw5.doc
+-rw-r--r--+ 1 jusvic cs240-1G    1151 Apr 11 13:19 lineholder.c
+-rw-r--r--+ 1 jusvic cs240-1G     130 Apr 11 12:53 lineholder.h
+-rw-r--r--  1 jusvic cs240-1G 1393072 Apr 11 13:24 lineholder.h.gch
+-rw-r--r--  1 jusvic cs240-1G    3612 Apr 11 13:24 lineholder.o
+-rw-r--r--+ 1 jusvic cs240-1G     349 Apr 11 12:53 makefile
+-rw-r--r--  1 jusvic cs240-1G     854 Apr 10 16:36 makefile2
+-rw-r--r--  1 jusvic cs240-1G     523 Apr  8 19:13 memo.txt
+-rw-r--r--  1 jusvic cs240-1G    1060 Mar 30 12:01 sample_typescript.txt
+-rwxr-xr-x  1 jusvic cs240-1G    9776 Apr 11 13:24 tail
+-rw-r--r--  1 jusvic cs240-1G       0 Apr 11 12:26 tail0.in
+-rw-r--r--  1 jusvic cs240-1G     145 Apr 11 12:26 tail1.in
+-rw-r--r--  1 jusvic cs240-1G     145 Apr 11 12:57 tail1.out
+-rw-r--r--  1 jusvic cs240-1G     198 Apr 11 12:26 tail2.in
+-rw-r--r--  1 jusvic cs240-1G     219 Apr 11 12:26 tail3.in
+-rw-r--r--  1 jusvic cs240-1G     447 Apr 11 12:26 tail4.in
+-rw-r--r--  1 jusvic cs240-1G       0 Apr 11 13:00 tail4.out
+-rw-r--r--+ 1 jusvic cs240-1G    1132 Apr 11 13:24 tail.c
+-rw-r--r--  1 jusvic cs240-1G    3144 Apr 11 13:24 tail.o
+drwxr-sr-x  2 jusvic cs240-1G     512 Apr 11 12:26 temp
+-rw-r--r--  1 jusvic cs240-1G       0 Apr 11 13:39 typescript
+jusvic@pclab32:~/cs240/hw5$ cat explore.c
+/* explore.c: program to explore memory locations via pointers
+   Justin Victoria
+   04/8/2017
+   Professor Xiaohui Liang
+   */
+
+#include <stdio.h>
+
+int a = 0x13579753;
+static int b = 0x24680864;
+
+void foobar(int, int, int *, int *);
+
+int main(void)
+{
+	static int c = 0xaaaa5555;
+	int d = 0x5555aaaa;
+	int *ap = &a;
+	int *bp = &b;
+	int *cp = &c;
+	int *dp = &d;
+	int array[1] = {0x01010101};
+
+/* add code here to print the address of array[0]  */
+        printf("address of array[0] = %p\n", &array[0]);
+
+
+/* add code here to print the variables a, b, c, d and pointers  */
+        printf("a = %x, b = %x, c = %x, d = %x\n", a, b, c, d);
+        printf("ap = %p, bp = %p, cp = %p, dp = %p\n", ap, bp, cp, dp);
+
+
+/* add code here to print array[i] for i = 0 to high enough value */
+	for (int i = 0; i < 6; i++) {
+            printf("%x\n", array[i]);
+        }
+
+
+/* call subroutine foobar and pass arguments  */
+	foobar(a, d, &a, &d);
+
+	return 0;
+}
+
+void foobar(int x, int y, int *xp, int *yp)
+{
+	int array[1] = {0x10101010};
+	
+	printf("Entering foobar\n");
+
+/* add code here to print address of array[0]  */
+        printf("auto variable array = %p\n", &array[0]);
+
+
+/* add code here to print array[i] for i = 0 to high enough value */
+        for (int i = 0; i < 40; i++) {
+            printf("%x\n", array[i]);
+        }
+
+	return;
+}
+
+jusvic@pclab32:~/cs240/hw5$ gcc -m32 explore.c -o explore
+jusvic@pclab32:~/cs240/hw5$ ./explore 
+address of array[0] = 0xff8c96a8
+a = 13579753, b = 24680864, c = aaaa5555, d = 5555aaaa
+ap = 0x804a024, bp = 0x804a028, cp = 0x804a02c, dp = 0xff8c9690
+1010101
+ce972b00
+ff8c96d0
+0
+0
+f75bf637
+Entering foobar
+auto variable array = 0xff8c9668
+10101010
+ce972b00
+80486ec
+804a024
+ff8c96b8
+804857c
+13579753
+5555aaaa
+804a024
+ff8c9690
+5555aaaa
+6
+804a024
+804a028
+804a02c
+ff8c9690
+1010101
+ce972b00
+ff8c96d0
+0
+0
+f75bf637
+f7756000
+f7756000
+0
+f75bf637
+1
+ff8c9764
+ff8c976c
+0
+0
+0
+f7756000
+f77a8c04
+f77a8000
+0
+f7756000
+f7756000
+0
+6d13742a
+jusvic@pclab32:~/cs240/hw5$ cat memo.txt 
+Justin Victoria
+04/08/2017
+Professor Xiaohui Liang
+
+In this assignment, I learned that the memory address of the array and the 
+automatic array are different from each other. I also was able to see that
+the first data printed in the for loop of the main program appeared again
+further down the stack. Also, I noticed that the addresses of a, b, and, c all
+go up by 4 bytes, which makes sense since they are integer variables. However,
+d's memory address is significantly different from the rest, starting with ff
+instead. 
+jusvic@pclab32:~/cs240/hw5$ exit
+exit
+
+Script done on Tue 11 Apr 2017 01:40:37 PM EDT

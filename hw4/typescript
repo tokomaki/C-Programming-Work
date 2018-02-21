@@ -1,0 +1,252 @@
+Script started on Wed 22 Mar 2017 04:39:59 PM EDT
+jusvic@itserver6:~/cs240/hw4$ ls -l
+total 60
+-rw-r--r--+ 1 jusvic cs240-1G   194 Mar 22 16:39 calc.h
+-rw-r--r--+ 1 jusvic cs240-1G    33 Mar 22 15:54 calc.in
+-rwxr-xr-x  1 jusvic cs240-1G  7840 Mar 22 16:39 calcit
+-rw-r--r--+ 1 jusvic cs240-1G   850 Mar 22 16:32 getch.c
+-rw-r--r--  1 jusvic cs240-1G  1344 Mar 22 16:39 getch.o
+-rw-r--r--+ 1 jusvic cs240-1G   855 Mar 22 16:34 getop.c
+-rw-r--r--  1 jusvic cs240-1G  1344 Mar 22 16:39 getop.o
+-rw-r--r--  1 jusvic cs240-1G 34816 Mar 22 14:56 hw4.doc
+-rw-r--r--+ 1 jusvic cs240-1G  1066 Mar 22 16:28 main.c
+-rw-r--r--  1 jusvic cs240-1G  2028 Mar 22 16:39 main.o
+-rw-r--r--  1 jusvic cs240-1G  1369 Mar 22 14:56 makefile
+drwxr-sr-x  2 jusvic cs240-1G   512 Mar 22 15:33 original
+-rw-r--r--+ 1 jusvic cs240-1G   939 Mar 22 16:36 stack.c
+-rw-r--r--  1 jusvic cs240-1G  1404 Mar 22 16:39 stack.o
+-rw-r--r--  1 jusvic cs240-1G     0 Mar 22 16:39 typescript
+jusvic@itserver6:~/cs240/hw4$ cat calc.h
+/* Justin Victoria
+ * 03/22/2017
+ * calc.h
+ *
+ * Pseudcode:
+ * place all functions
+ */
+
+#define NUMBER '0'
+
+void push(int);
+int pop(void);
+int getop(char[]);
+int getch(void);
+void ungetch(int);
+jusvic@itserver6:~/cs240/hw4$ cat calc.in
+292 16 % 292 16 / 16 * + 292 ^ ~
+jusvic@itserver6:~/cs240/hw4$ cat getch.c
+/*
+ * Justin Victoria
+ * 03/22/2017
+ * getch.c
+ * 
+ * Pseudocode:
+ * Initialize variables
+ * In getch, return appropiately for test bufp >0
+ * In ungetch, if bufp >= BUFSIZE, print that
+ * it's too many chracters
+ * otherwise increment bufp++ index of buf and c to it
+ *
+ * getch  returns one  character from stdin 
+ * or from the buffer buf if it is not empty
+ * ungetch puts one character in the buffer buf 
+ */
+
+#include <stdio.h>
+#define BUFSIZE 100
+
+char buf[BUFSIZE];        /* buffer for ungetch */
+int  bufp = 0;            /* next free position in buf */
+
+int getch(void)           /* get a (possibly pushed back) character */
+{
+    return(bufp > 0) ? buf[--bufp] : getchar();
+}
+
+void ungetch(int c)        /* push character back on input */
+{
+    if (bufp >= BUFSIZE)
+	printf("ungetch: too many character \n");
+    else
+	buf[bufp++] = c;
+}
+jusvic@itserver6:~/cs240/hw4$ cat getop.c
+/* Justin Victoria
+ * 03/22/2017
+ * getop.c
+ *
+ * Pseudocode:
+ * while get() is not blank or tab and assigned
+ * to s[0] and c:
+ *   check that c is not a number
+ *   collect integer part in string
+ *   collect fractional part in string
+ *
+ * gets next token: operator or numeric operand
+ */
+
+#include <stdio.h>
+#include <ctype.h>
+#include "calc.h"
+
+int getop(char s[])
+{
+    int i, c;
+
+    while ((s[0] = c = getch()) == ' ' || c == '\t')
+	;
+
+    s[1] = '\0';
+
+    if (!isdigit(c) && c != '.')
+      return c;  /* not a number */
+
+    /* collect integer part in string s */
+    i = 0;
+    if (isdigit(c))
+      while (isdigit(s[++i] = c = getch()))
+	    ;
+
+    /* collect fractional part in string s */
+    if (c == '.')
+      while (isdigit(s[++i] = c = getch()))
+	;
+    
+    s[i] = '\0';
+    if (c != EOF)
+      ungetch(c);
+    
+    return NUMBER;
+}
+
+
+jusvic@itserver6:~/cs240/hw4$ cat main.c
+/*
+ * Justin Victoria
+ * 03/22/2017
+ * main.c
+ *
+ * reverse polish calculator
+ * Pseudocode:
+ * while getop(s) assigned to type is not EOF
+ *   switch and begin pushing for each case
+ */
+
+#include <stdio.h>
+#include "calc.h" /* header file */
+#include <math.h>
+#include <stdlib.h>
+
+#define MAXOP 100
+
+int main()
+{
+  int type;
+  int op2;
+  char s[MAXOP];
+  
+  while ((type = getop(s)) != EOF) 
+    {
+      switch(type) 
+	{
+	case NUMBER:
+	  push(atoi(s));
+	  break;
+	case '+':
+	  push(pop() + pop());
+	  break;
+	case '*':
+	  push(pop() * pop());
+	  break;
+	case '-':
+	  op2 = pop();
+	  push(pop() - op2);
+	  break;
+	case '/':
+	  op2 = pop();
+	  if (op2 != 0)
+	    push(pop() / op2);
+	  else 
+	    {
+	      printf("error : zero divisor\n");
+	      exit(1);
+	    }
+	  break;
+	case '^':
+	  push(pop()^pop());
+	  break;
+	case '%':
+	  op2 = pop();
+	  push(pop() % op2);
+	  break;
+	case '~':
+	  push(~pop());
+	  break;
+	case '\n':
+	  printf("The answer is %d.\n", pop());
+	  break;
+	default:
+	  printf("error: unknown command %s\n", s);
+	  exit(1);
+	}
+    }
+    return 0;
+}
+jusvic@itserver6:~/cs240/hw4$ cat stack.c
+/*
+ * Justin Victoria
+ * 03/22/2017
+ * stack.c
+ *
+ * Pseudocode:
+ * In push():
+ *   if sp < MAXVAL : assign f to val[sp++]
+ *   otherwise print error message
+ *
+ * In pop():
+ *   if sp > 0 : return val at sp and decrement
+ *   otherwise print error message
+ *
+ * stack routines
+ */
+
+#include <stdio.h>
+#include "calc.h"
+#define MAXVAL 100  /* maximum depth of val stack */
+
+/* even better, we could make the following two defines "static"
+   and thus hide these data structures from the rest of the sources */
+static int sp = 0;         /* next free stack position */
+static int val[MAXVAL]; /* value stack */
+
+
+/* push: push f onto value stack */
+void push(int f)
+{
+    if (sp < MAXVAL)
+	val[sp++] = f;
+    else
+	printf("error: stack full, can't push %d\n", f);
+}
+
+/* pop: pop and return top value from stack */
+
+int pop(void)
+{
+    if (sp > 0)
+	return val[--sp];
+    else
+      {
+	printf("error: stack empty\n");
+	return 0.0;
+      }
+}
+
+jusvic@itserver6:~/cs240/hw4$ make
+make: 'calcit' is up to date.
+jusvic@itserver6:~/cs240/hw4$ ./ [Kcalcit < calci[K.in
+The answer is -1.
+jusvic@itserver6:~/cs240/hw4$ exit
+exit
+
+Script done on Wed 22 Mar 2017 04:41:19 PM EDT

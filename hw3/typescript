@@ -1,0 +1,292 @@
+Script started on Mon 06 Mar 2017 05:08:35 PM EST
+jusvic@pclab36:~/cs240/hw3$ ls -l
+total 50
+lrwxrwxrwx  1 jusvic ugrad    36 Mar  5 17:35 cs240_hw3 -> /courses/cs240/s17/xiaohui/GROUP/hw3
+-rw-r--r--  1 jusvic ugrad 35840 Mar  5 17:35 hw3.doc
+-rwxr-xr-x  1 jusvic ugrad  7544 Mar  6 17:07 showxbits
+-rw-r--r--+ 1 jusvic ugrad   812 Mar  6 17:03 showxbits.c
+-rw-r--r--  1 jusvic ugrad     0 Mar  6 17:08 typescript
+-rw-r--r--+ 1 jusvic ugrad  3459 Mar  6 17:07 xbits.c
+-rw-r--r--  1 jusvic ugrad   763 Mar  5 17:35 xbits.h
+jusvic@pclab36:~/cs240/hw3$ cat sh[K[Kxbits.c
+/*  Name: Justin Victoria
+ *  Date: 3/5/2017
+ *  Professor Xiaohui
+ *  
+ *  Pseudocode:
+ *  void itox(character array, integer variable) {
+ *  Initialize variables
+ *  While the number is not equal to 0
+ *     Assign the remainder variable to the number % 16
+ *         Start switch case testing remainder
+ *         If remainder is 0, assign the array at count to '0', and so forth
+ *     Assign number to itself over 16
+ *     increment count variable
+ *  While count is <= 7
+ *     Assign the array at count to '0'
+ *     Increment count
+ *  for ([0, count/2), increment iterating variable)
+ *     Swap array at i with array at count - i - 1
+ *  Assign the array at 2 * sizeof(int) to '\0'
+ *  print using default
+ *  }
+ *
+ *  int xtoi(character array)
+ *  Initialize variables
+ *  for (int i = 0, until the array at i != '\0'; increment i)
+ *     if (the array at i >= '0' AND the array at i <= '9'
+ *        assign temp to the array at i minus '0'
+ *        assign total to 16 * total + temp
+ *     assign temp to the array at i minus 'A' + 10
+ *     assign total to 16 * total + temp
+ *     otherwise
+ *        assign temp to 0
+ *        assign total to 16 * total + temp
+ *  return total
+ *  print by default
+ */
+
+#include <stdio.h>
+#include "xbits.h"
+
+/* function represents the int n as a hexstring which it places in the
+hexstring array */
+
+void itox( char hexstring[], int n) {
+   char store;
+   int number = n;
+   int rem;
+   int count = 0;
+
+   while (number != 0) {
+      rem = number % 16;
+      switch (rem) {
+         case 0:
+	    hexstring[count] = '0';
+	    break;
+	 case 1:
+	    hexstring[count] = '1';
+	    break;
+	 case 2:
+	    hexstring[count] = '2';
+	    break;
+	 case 3:
+	    hexstring[count] = '3';
+	    break;
+	 case 4:
+	    hexstring[count] = '4';
+	    break;
+	 case 5:
+	    hexstring[count] = '5';
+	    break;
+	 case 6:
+            hexstring[count] = '6';
+	    break;
+	 case 7:
+	    hexstring[count] = '7';
+	    break;
+	 case 8:
+	    hexstring[count] = '8';
+	    break;
+	 case 9:
+	    hexstring[count] = '9';
+	    break;
+	 case 10:
+	    hexstring[count] = 'A';
+	    break;
+	 case 11:
+	    hexstring[count] = 'B';
+	    break;
+	 case 12:
+	    hexstring[count] = 'C';
+	    break;
+	 case 13:
+	    hexstring[count] = 'D';
+	    break;
+	 case 14:
+	    hexstring[count] = 'E';
+	    break;
+	 case 15:
+	    hexstring[count] = 'F';
+	    break;
+      }
+      number /= 16;
+      count++;
+   }
+   while (count <= 7) {
+      hexstring[count] = '0';
+      count++;
+   }
+   for (int i = 0; i < count / 2; ++i) {
+      store = hexstring[i];
+      hexstring[i] = hexstring[count - i - 1];
+      hexstring[count - i - 1] = store;
+   }
+   hexstring[2 * sizeof(int)] = '\0';
+   printf("in itox, processing %d\n", n);
+}
+
+
+/* function converts hexstring array to equivalent integer value  */
+
+int xtoi( char hexstring[]) {
+   int total, temp, count = 0;
+   for (int i = 0; hexstring[i] != '\0'; ++i) {
+      if (hexstring[i] >= '0' && hexstring[i] <= '9') {
+         temp = hexstring[i] - '0';
+	 total = 16 * total + temp;
+      }
+      else if (hexstring[i] >= 'A' && hexstring[i] <= 'F') {
+         temp = hexstring[i] - 'A' + 10;
+	 total = 16 * total + temp;
+      }
+      else {
+         temp = 0;
+	 total = 16 * total + temp;
+      }
+   }
+   return total;
+   printf("in xtoi, processing %s\n", hexstring);
+}
+
+jusvic@pclab36:~/cs240/hw3$ cat showxbits.c
+/* Name: Justin Victoria
+ * Date: 3/5/2017
+ *  Program for functions to study integer-hex conversions
+ *  Pseudocode:
+ *  intialize variables
+ *  Main
+ *     while scanned digits of bitwise And of number is equal to 1
+ *        initialize character array with ENOUGH_SPACE
+ *        call itox
+ *        assign m to a call to xtoi passing in the array
+ *        print using default
+ *     return 0
+ */
+
+#include <stdio.h>
+#include <string.h>
+#include "xbits.h"
+
+#define ENOUGH_SPACE 2*sizeof(int)
+
+int number;
+int m = 0;
+
+int main() {
+
+   while (scanf("%d", &number) == 1) {
+      char hexstring[ENOUGH_SPACE];
+      itox(hexstring, number);
+      m = xtoi(hexstring);
+      printf("\t%12d %s %12d\n", number, hexstring, m);
+   }
+   return 0;  /* everything is just fine */
+}
+
+
+jusvic@pclab36:~/cs240/hw3$ gr[Kcc -m32 showxbits.c xbits.c -o showxbits
+jusvic@pclab36:~/cs240/hw3$ ./showxbits 
+10
+in itox, processing 10
+	          10 0000000A           10
+13
+in itox, processing 13
+	          13 0000000D           13
+14
+in itox, processing 14
+	          14 0000000E           14
+15
+in itox, processing 15
+	          15 0000000F           15
+16
+in itox, processing 16
+	          16 00000010           16
+32
+in itox, processing 32
+	          32 00000020           32
+64  31
+in itox, processing 31
+	          31 0000001F           31
+63
+in itox, processing 63
+	          63 0000003F           63
+123408712305721
+in itox, processing 2147483647
+	  2147483647 7FFFFFFF   2147483647
+jusvic@pclab36:~/cs240/hw3$ ./showxbits gcc -m32 showxbits.c xbits.c -o showxbits[C[1@ [1@-[1@g
+jusvic@pclab36:~/cs240/hw3$ gdb ./showxbits
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.04) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./showxbits...done.
+(gdb) b
+No default breakpoint address now.
+(gdb) b main
+Breakpoint 1 at 0x80484cc: file showxbits.c, line 24.
+(gdb) r
+Starting program: /courses/cs240/s17/xiaohui/jusvic/hw3/showxbits 
+
+Breakpoint 1, main () at showxbits.c:24
+24	int main() {
+(gdb) s
+26	   while (scanf("%d", &number) == 1) {
+(gdb) s
+n
+32	   return 0;  /* everything is just fine */
+(gdb) p number
+$1 = 0
+(gdb) l
+27	      char hexstring[ENOUGH_SPACE];
+28	      itox(hexstring, number);
+29	      m = xtoi(hexstring);
+30	      printf("\t%12d %s %12d\n", number, hexstring, m);
+31	   }
+32	   return 0;  /* everything is just fine */
+33	}
+34	
+35	
+(gdb) bt
+#0  main () at showxbits.c:32
+(gdb) help
+List of classes of commands:
+
+aliases -- Aliases of other commands
+breakpoints -- Making program stop at certain points
+data -- Examining data
+files -- Specifying and examining files
+internals -- Maintenance commands
+obscure -- Obscure features
+running -- Running the program
+stack -- Examining the stack
+status -- Status inquiries
+support -- Support facilities
+tracepoints -- Tracing of program execution without stopping the program
+user-defined -- User-defined commands
+
+Type "help" followed by a class name for a list of commands in that class.
+Type "help all" for the list of all commands.
+Type "help" followed by command name for full documentation.
+Type "apropos word" to search for commands related to "word".
+Command name abbreviations are allowed if unambiguous.
+(gdb) q
+A debugging session is active.
+
+	Inferior 1 [process 9922] will be killed.
+
+Quit anyway? (y or n) y
+jusvic@pclab36:~/cs240/hw3$ exit
+exit
+
+Script done on Mon 06 Mar 2017 05:10:22 PM EST

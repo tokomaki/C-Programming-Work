@@ -1,0 +1,11 @@
+Justin Victoria
+04/08/2017
+Professor Xiaohui Liang
+
+In this assignment, I learned that the memory address of the array and the 
+automatic array are different from each other. I also was able to see that
+the first data printed in the for loop of the main program appeared again
+further down the stack. Also, I noticed that the addresses of a, b, and, c all
+go up by 4 bytes, which makes sense since they are integer variables. However,
+d's memory address is significantly different from the rest, starting with ff
+instead. 

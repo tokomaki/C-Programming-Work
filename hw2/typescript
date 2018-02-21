@@ -1,0 +1,351 @@
+Script started on Wed 15 Feb 2017 06:25:24 PM EST
+jusvic@pclab32:~/cs240/hw2$ ls -al[K[Kl
+total 84
+lrwxrwxrwx  1 jusvic cs240-1G    36 Feb  2 17:14 cs240_hw2 -> /courses/cs240/s17/xiaohui/GROUP/hw2
+-rwxr-xr-x  1 jusvic cs240-1G  7468 Feb 15 18:17 hist
+-rw-r-----+ 1 jusvic cs240-1G  1872 Feb 15 18:17 hist.c
+-rw-r-----  1 jusvic cs240-1G 34304 Feb  2 17:15 hw2.doc
+-rw-r-----  1 jusvic cs240-1G  1422 Feb  2 17:15 hw2_sample_output.txt
+-rwxr-xr-x  1 jusvic cs240-1G  7460 Feb 15 17:10 reverse
+-rw-r--r--+ 1 jusvic cs240-1G  1090 Feb 15 17:10 reverse.c
+-rw-r-----  1 jusvic cs240-1G   268 Feb  2 17:15 reverse.in
+-rwxr-xr-x  1 jusvic cs240-1G  7460 Feb 15 14:56 trim
+-rw-r--r--  1 jusvic cs240-1G  1123 Feb 15 14:50 trim.c
+-rw-r-----  1 jusvic cs240-1G    94 Feb  2 17:15 trim.in
+-rw-r--r--  1 jusvic cs240-1G    74 Feb 15 14:56 trim.out
+-rw-r--r--  1 jusvic cs240-1G     0 Feb 15 18:25 typescript
+-rw-r-----  1 jusvic cs240-1G  1530 Feb  2 17:15 visitype.c
+-rwxr-xr-x  1 jusvic cs240-1G  7432 Feb 15 17:54 vt
+-rw-r-----+ 1 jusvic cs240-1G  1561 Feb 15 17:54 vt.c
+-rw-r-----  1 jusvic cs240-1G    12 Feb  2 17:15 vt.in
+-rw-r--r--  1 jusvic cs240-1G    96 Feb 15 17:54 vt.out
+jusvic@pclab32:~/cs240/hw2$ cat trim.c
+/*
+
+Pseudocode for trim.c Exercise 1-18 in K&R:
+
+while there is still a line to process
+    for each character starting at the end of the line
+        find the first non blank character or the beginning of the line
+        if a non-blank character is found
+            add an eol and terminating zero
+            and print it out
+*/
+
+#include <stdio.h>
+
+/* define maximum length of lines */
+#define MAXLINE 1000
+
+/* define function prototypes */
+int mygetline(char line[], int maxline);
+
+int main() {
+    int len;
+    int i;
+    char line[MAXLINE];
+    while ((len = mygetline(line, MAXLINE)) > 0) {
+        for (i = len - 1; i >= 0; --i) {
+            if (line[i] != ' ' && line[i] != '\n' && line[i] != '\t') {
+                line[i + 1] = '\n';
+                line[i + 2] = '\0';
+                printf("%s", line);
+                break;
+            } 
+        }
+    }
+    return 0;
+}
+
+int mygetline(char s[], int lim) {
+    int c, i;
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
+        s[i] = c;
+    if (c == '\n') {
+        s[i] = c;
+        ++i;
+    }
+    s[i] = '\0';
+    return i;
+}
+jusvic@pclab32:~/cs240/hw2$ cat reverse.c
+/*
+Pseudo code for reverse.c Exercise 1-19 in K&R:
+
+    find length of the string to reverse
+    for each character from the beginning of the string to half way
+        copy the character here to a holding variable
+        copy the character the same distance from end to here
+        copy the holding variable to the same distance from end
+
+end of psuedo code
+*/
+
+#include <stdio.h>
+#define MAXLINE 1000 /* maximum input line length */
+
+int mygetline(char line[], int maxline);
+
+int main() {
+    int len;             // current line length
+    char line[MAXLINE];  // current input line
+    int temp;            // holding variable
+
+    while ((len = mygetline(line, MAXLINE)) > 0) {
+        for (int i = 0; i < len / 2; ++i) {
+	    temp = line[i];
+	    line[i] = line[len - 1 - i];
+	    line[len - 1 - i] = temp;
+	}
+    printf("%s\n", line);
+    }
+}
+
+int mygetline(char s[], int lim) {
+    int c, i;
+
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) 
+        s[i] = c;
+    if (c == '\n') {
+        s[i] = c;
+        ++i;    
+    }
+    s[i] = '\0';
+    return i;
+}
+jusvic@pclab32:~/cs240/hw2$ cat vt.c
+/* visitype.c
+Bob Wilson
+09/09/2002
+*/
+#include <stdio.h>
+
+/*
+while not at EOF
+print the char and hexdec for each character
+*/
+
+int main ()
+{
+int i;
+int c;
+char asciiname[] =
+        "NUL\0"  "SOH\0"  "STX\0"  "ETX\0"  "EOT\0"  "ENQ\0"  "ACK\0"  "BEL\0"
+        " BS\0"  " HT\0"  " NL\0"  " VT\0"  " NP\0"  " CR\0"  " SO\0"  " SI\0"
+        "DLE\0"  "DC1\0"  "DC2\0"  "DC3\0"  "DC4\0"  "NAK\0"  "SYN\0"  "ETB\0"
+        "CAN\0"  " EM\0"  "SUB\0"  "ESC\0"  " FS\0"  " GS\0"  " RS\0"  " VS\0"
+        " SP\0"  "  !\0"  "  \"\0" "  #\0"  "  $\0"  "  %\0"  "  &\0"  "  '\0"
+        "  (\0"  "  )\0"  "  *\0"  "  +\0"  "  ,\0"  "  -\0"  "  .\0"  "  /\0"
+        "  0\0"  "  1\0"  "  2\0"  "  3\0"  "  4\0"  "  5\0"  "  6\0"  "  7\0"
+        "  8\0"  "  9\0"  "  :\0"  "  ;\0"  "  <\0"  "  =\0"  "  >\0"  "  ?\0"
+        "  @\0"  "  A\0"  "  B\0"  "  C\0"  "  D\0"  "  E\0"  "  F\0"  "  G\0"
+        "  H\0"  "  I\0"  "  J\0"  "  K\0"  "  L\0"  "  M\0"  "  N\0"  "  O\0"
+        "  P\0"  "  Q\0"  "  R\0"  "  S\0"  "  T\0"  "  U\0"  "  V\0"  "  W\0"
+        "  X\0"  "  Y\0"  "  Z\0"  "  [\0"  "  \\\0" "  ]\0"  "  ^\0"  "  _\0"
+        "  `\0"  "  a\0"  "  b\0"  "  c\0"  "  d\0"  "  e\0"  "  f\0"  "  g\0"
+        "  h\0"  "  i\0"  "  j\0"  "  k\0"  "  l\0"  "  m\0"  "  n\0"  "  o\0"
+        "  p\0"  "  q\0"  "  r\0"  "  s\0"  "  t\0"  "  u\0"  "  v\0"  "  w\0"
+        "  x\0"  "  y\0"  "  z\0"  "  {\0"  "  |\0"  "  }\0"  "  ~\0"  "DEL\0"
+        ;
+while ((c = getchar()) != EOF)
+printf("%3x\t%s\n", c, &asciiname[4 * c]);
+}
+jusvic@pclab32:~/cs240/hw2$ cat hist.c
+/* hist.c
+Modified by Justin Victoria
+03/15/2017
+Originally:
+visitype.c
+Bob Wilson
+09/09/2002
+*/
+#include <stdio.h>
+
+/*
+while not at EOF
+print the char and hexdec for each character
+*/
+
+int main ()
+{
+    int list[128];
+    int y;
+    int x;
+    int c;
+    char asciiname[] =
+        "NUL\0"  "SOH\0"  "STX\0"  "ETX\0"  "EOT\0"  "ENQ\0"  "ACK\0"  "BEL\0"
+        " BS\0"  " HT\0"  " NL\0"  " VT\0"  " NP\0"  " CR\0"  " SO\0"  " SI\0"
+        "DLE\0"  "DC1\0"  "DC2\0"  "DC3\0"  "DC4\0"  "NAK\0"  "SYN\0"  "ETB\0"
+        "CAN\0"  " EM\0"  "SUB\0"  "ESC\0"  " FS\0"  " GS\0"  " RS\0"  " VS\0"
+        " SP\0"  "  !\0"  "  \"\0" "  #\0"  "  $\0"  "  %\0"  "  &\0"  "  '\0"
+        "  (\0"  "  )\0"  "  *\0"  "  +\0"  "  ,\0"  "  -\0"  "  .\0"  "  /\0"
+        "  0\0"  "  1\0"  "  2\0"  "  3\0"  "  4\0"  "  5\0"  "  6\0"  "  7\0"
+        "  8\0"  "  9\0"  "  :\0"  "  ;\0"  "  <\0"  "  =\0"  "  >\0"  "  ?\0"
+        "  @\0"  "  A\0"  "  B\0"  "  C\0"  "  D\0"  "  E\0"  "  F\0"  "  G\0"
+        "  H\0"  "  I\0"  "  J\0"  "  K\0"  "  L\0"  "  M\0"  "  N\0"  "  O\0"
+        "  P\0"  "  Q\0"  "  R\0"  "  S\0"  "  T\0"  "  U\0"  "  V\0"  "  W\0"
+        "  X\0"  "  Y\0"  "  Z\0"  "  [\0"  "  \\\0" "  ]\0"  "  ^\0"  "  _\0"
+        "  `\0"  "  a\0"  "  b\0"  "  c\0"  "  d\0"  "  e\0"  "  f\0"  "  g\0"
+        "  h\0"  "  i\0"  "  j\0"  "  k\0"  "  l\0"  "  m\0"  "  n\0"  "  o\0"
+        "  p\0"  "  q\0"  "  r\0"  "  s\0"  "  t\0"  "  u\0"  "  v\0"  "  w\0"
+        "  x\0"  "  y\0"  "  z\0"  "  {\0"  "  |\0"  "  }\0"  "  ~\0"  "DEL\0"
+        ;
+for (x = 0; x < 128; ++x)
+    list[x] = 0;
+while ((c = getchar()) != EOF) {
+    ++list[c];
+}
+printf("\nDEC  HEX  ASCII NAME   COUNT\n");
+for (y = 0; y < 128; ++y) {
+    if (list[y] != 0)
+        printf("%d\t%3x\t%s\t%d\n", y, y, &asciiname[4 * y], list[y]);
+}
+return 0;
+}
+jusvic@pclab32:~/cs240/hw2$ gcc -m32 -o trim trim.c
+jusvic@pclab32:~/cs240/hw2$ gcc -m32 -o reverse reverse.c
+jusvic@pclab32:~/cs240/hw2$ gcc -m23 [K[K[K32 -o vt vt.c
+jusvic@pclab32:~/cs240/hw2$ gcc -m32 -o hist hist.c
+jusvic@pclab32:~/cs240/hw2$ od -x trimin[K[K.ni[K[Kin
+0000000 0909 6f4e 2077 7369 7420 6568 2020 2020
+0000020 2020 0a20 0909 6954 656d 6620 726f 0909
+0000040 090a 6109 6c6c 6720 6f6f 2064 656d 206e
+0000060 6f74 2020 2020 090a 6309 6d6f 2065 6f74
+0000100 7420 6568 6120 6469 6f20 2066 6874 2065
+0000120 6170 7472 2e79 2020 2020 2020 0a0a
+0000136
+jusvic@pclab32:~/cs240/hw2$ ./trim <trim.in >trim.out
+jusvic@pclab32:~/cs240/hw2$ od -x trim.out
+0000000 0909 6f4e 2077 7369 7420 6568 090a 5409
+0000020 6d69 2065 6f66 0a72 0909 6c61 206c 6f67
+0000040 646f 6d20 6e65 7420 0a6f 0909 6f63 656d
+0000060 7420 206f 6874 2065 6961 2064 666f 7420
+0000100 6568 7020 7261 7974 0a2e
+0000112
+jusvic@pclab32:~/cs240/hw2$ .l[K/reverse <reverse.in
+
+?semordnilap fo draeh uoy evaH
+
+
+
+:gniteem no ,nedE fo nedrag eht nI
+
+
+
+".madA m'I ,madaM"
+
+
+
+:taefed tsrif sih retfa ytilibapac sih no noelopaN
+
+
+
+".ablE was I ere I saw elbA"
+
+
+
+:teid no ,esruoc fo dnA
+
+
+
+".doc no teid I .ssentaf a stneverp reven tsaf A !tnessid I :eton ,coD"
+
+
+jusvic@pclab32:~/cs240/hw2$ od -x vt.in
+0000000 0201 7e7d 2c61 7a62 7f5c 0a5a
+0000014
+jusvic@pclab32:~/cs240/hw2$ ./vt <vt.in > [Kvt.out
+jusvic@pclab32:~/cs240/hw2$ od -x vt.out
+0000000 2020 0931 4f53 0a48 2020 0932 5453 0a58
+0000020 3720 0964 2020 0a7d 3720 0965 2020 0a7e
+0000040 3620 0931 2020 0a61 3220 0963 2020 0a2c
+0000060 3620 0932 2020 0a62 3720 0961 2020 0a7a
+0000100 3520 0963 2020 0a5c 3720 0966 4544 0a4c
+0000120 3520 0961 2020 0a5a 2020 0961 4e20 0a4c
+0000140
+jusvic@pclab32:~/cs240/hw2$ ./hist <trim.in
+
+DEC  HEX  ASCII NAME   COUNT
+9	  9	 HT	10
+10	  a	 NL	5
+32	 20	 SP	29
+46	 2e	  .	1
+78	 4e	  N	1
+84	 54	  T	1
+97	 61	  a	3
+99	 63	  c	1
+100	 64	  d	2
+101	 65	  e	6
+102	 66	  f	2
+103	 67	  g	1
+104	 68	  h	3
+105	 69	  i	3
+108	 6c	  l	2
+109	 6d	  m	3
+110	 6e	  n	1
+111	 6f	  o	8
+112	 70	  p	1
+114	 72	  r	2
+115	 73	  s	1
+116	 74	  t	6
+119	 77	  w	1
+121	 79	  y	1
+jusvic@pclab32:~/cs240/hw2$ ./hist <trim.in[K<reverse.in
+
+DEC  HEX  ASCII NAME   COUNT
+10	  a	 NL	14
+32	 20	 SP	42
+33	 21	  !	1
+34	 22	  "	6
+39	 27	  '	1
+44	 2c	  ,	4
+46	 2e	  .	4
+58	 3a	  :	4
+63	 3f	  ?	1
+65	 41	  A	4
+68	 44	  D	1
+69	 45	  E	2
+72	 48	  H	1
+73	 49	  I	6
+77	 4d	  M	1
+78	 4e	  N	1
+97	 61	  a	18
+98	 62	  b	3
+99	 63	  c	4
+100	 64	  d	12
+101	 65	  e	25
+102	 66	  f	8
+103	 67	  g	2
+104	 68	  h	4
+105	 69	  i	10
+108	 6c	  l	5
+109	 6d	  m	5
+110	 6e	  n	16
+111	 6f	  o	15
+112	 70	  p	4
+114	 72	  r	9
+115	 73	  s	13
+116	 74	  t	13
+117	 75	  u	2
+118	 76	  v	3
+119	 77	  w	2
+121	 79	  y	2
+jusvic@pclab32:~/cs240/hw2$ ./hist <reverse.in[K<vt.in
+
+DEC  HEX  ASCII NAME   COUNT
+1	  1	SOH	1
+2	  2	STX	1
+10	  a	 NL	1
+44	 2c	  ,	1
+90	 5a	  Z	1
+92	 5c	  \	1
+97	 61	  a	1
+98	 62	  b	1
+122	 7a	  z	1
+125	 7d	  }	1
+126	 7e	  ~	1
+127	 7f	DEL	1
+jusvic@pclab32:~/cs240/hw2$ .qc[K[K[Kexit
+exit
+
+Script done on Wed 15 Feb 2017 06:38:26 PM EST

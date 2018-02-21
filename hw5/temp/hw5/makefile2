@@ -1,0 +1,31 @@
+cc  =   gcc
+
+tail:   tail.o lineholder.o
+        $(cc) tail.o lineholder.o -o tail
+
+        # note that if calc.h changes, main.c and getop.c must be recompiled
+
+        tail.o:     tail.c
+
+        lineholder.o:   lineholder.c lineholder.h
+
+        #main.o:    main.c calc.h
+
+        #getop.o:   getop.c calc.h
+
+        #stack.o:   stack.c 
+
+        #getch.o:   getch.c 
+
+        # this tells make what to make if you just type 'make'; if this isn't there,
+        # the first rule in the file will be the default.
+
+        # default:  calcit
+
+        # here is a rule to clean up the directory when calcit is final and you want
+        # to reduce the clutter in the listing. Note that clean doesn't need to
+        # depend on any file modification time, so the < dependency list > position is
+        # just left empty.
+
+        clean:
+        rm *.o

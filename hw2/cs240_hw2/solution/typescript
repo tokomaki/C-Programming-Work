@@ -1,0 +1,321 @@
+Script started on Thu 02 Mar 2017 06:41:44 PM EST
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ls -l
+total 45
+-rwxr-xr-x  1 xiaohui cs240-1 7468 Mar  2 18:40 hist
+-rw-r--r--+ 1 xiaohui cs240-1 1616 Mar  2 18:40 hist.c
+-rwxr-xr-x  1 xiaohui cs240-1 7484 Mar  2 18:37 reverse
+-rw-r--r--  1 xiaohui cs240-1 1243 Mar  2 18:26 reverse.c
+-rw-r--r--  1 xiaohui cs240-1  268 Mar  2 18:33 reverse.in
+-rw-r--r--  1 xiaohui cs240-1  268 Mar  2 18:38 reverse.out
+-rwxr-xr-x  1 xiaohui cs240-1 7456 Mar  2 18:37 trim
+-rw-r--r--  1 xiaohui cs240-1 1229 Mar  2 18:26 trim.c
+-rw-r--r--  1 xiaohui cs240-1   94 Mar  2 18:27 trim.in
+-rw-r--r--  1 xiaohui cs240-1   74 Mar  2 18:37 trim.out
+-rw-r--r--  1 xiaohui cs240-1    0 Mar  2 18:41 typescript
+-rwxr-xr-x  1 xiaohui cs240-1 7432 Mar  2 18:39 vt
+-rw-r--r--+ 1 xiaohui cs240-1 1547 Mar  2 18:39 vt.c
+-rw-r--r--  1 xiaohui cs240-1   12 Mar  2 18:26 vt.in
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ csa[K[Kat trim.c
+/* trim.c: trim trailing spaces and tabs
+   Bob Wilson 
+   09/18/02  
+   modified by Ron Cheung
+   10/1/12
+*/
+#include <stdio.h>
+
+#define MAXLINE 1000
+
+/* function prototypes  */
+
+int getline1(char s[], int lim);
+
+/* pseudo code for the trim program
+
+	while there is still a line to process
+	  for each character starting at the end of the line
+	  find the first non blank character or the beginning of the line
+	     if a non-blank character is found
+		 add an eol and terminating zero 
+		 and print it out
+
+   end of pseudo code
+*/
+
+int main()
+{
+	int  i, len, stop;
+	char line[MAXLINE];
+
+	while ((len = getline1(line, MAXLINE)) > 0) {
+	  stop = 0;
+	  for (i=len-1; i>=0 && !stop; --i)  {
+	       if (line[i] != ' ' && line[i] != '\t' && line[i] != '\n')  {
+	           stop = 1;      /* stop on any non-blank,tab,eol */
+	  	   line[i+1] = '\n';       /* add an eol */
+	  	   line[i+2] = '\0';       /* and a zero to term the string */
+	  	   printf("%s",line);
+	       }
+	  }
+	}
+	return 0;
+}
+
+/* getline1: read a line into s, return length */
+int getline1(char s[], int lim)
+{
+	int c, i;
+
+	for (i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+		s[i] = c;
+	if (c == '\n') {
+		s[i] = c;
+		++i;
+	}
+	s[i] = '\0';
+	return i;
+}
+
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ gcc -m32 trim.c -o trim
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ./trim < trim.in > trim.out
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ od -x trim.in
+0000000 0909 6f4e 2077 7369 7420 6568 2020 2020
+0000020 2020 0a20 0909 6954 656d 6620 726f 0909
+0000040 090a 6109 6c6c 6720 6f6f 2064 656d 206e
+0000060 6f74 2020 2020 090a 6309 6d6f 2065 6f74
+0000100 7420 6568 6120 6469 6f20 2066 6874 2065
+0000120 6170 7472 2e79 2020 2020 2020 0a0a
+0000136
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ od -x trim.oiu[K[Kut
+0000000 0909 6f4e 2077 7369 7420 6568 090a 5409
+0000020 6d69 2065 6f66 0a72 0909 6c61 206c 6f67
+0000040 646f 6d20 6e65 7420 0a6f 0909 6f63 656d
+0000060 7420 206f 6874 2065 6961 2064 666f 7420
+0000100 6568 7020 7261 7974 0a2e
+0000112
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ gcc -m32 reverse.c -o reverse
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ./reverse < reverse.in > reverse.out
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ cat reverse
+reverse      reverse.c    reverse.in   reverse.out  
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ cat reverse.in
+Have you heard of palindromes?
+
+In the garden of Eden, on meeting:
+
+"Madam, I'm Adam."
+
+Napoleon on his capability after his first defeat:
+
+"Able was I ere I saw Elba."
+
+And of course, on diet:
+
+"Doc, note: I dissent! A fast never prevents a fatness. I diet on cod."
+
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ cat reverse.out
+
+?semordnilap fo draeh uoy evaH
+
+:gniteem no ,nedE fo nedrag eht nI
+
+".madA m'I ,madaM"
+
+:taefed tsrif sih retfa ytilibapac sih no noelopaN
+
+".ablE was I ere I saw elbA"
+
+:teid no ,esruoc fo dnA
+
+".doc no teid I .ssentaf a stneverp reven tsaf A !tnessid I :eton ,coD"
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ls[K[Kcat vt.c
+/* vt.c: Visible Typewriter
+   bob wilson 
+   09/18/02  
+   */
+
+/* pseudo code for visible typing
+
+	while there is still a character before EOF
+	    print the ASCII name of the character and its hex value
+
+end of pseudo code
+*/
+
+#include <stdio.h>
+
+
+int main ()
+{
+int i;
+char asciiname[] = 
+	"NUL\0"  "SOH\0"  "STX\0"  "ETX\0"  "EOT\0"  "ENQ\0"  "ACK\0"  "BEL\0"
+	" BS\0"  " HT\0"  " NL\0"  " VT\0"  " NP\0"  " CR\0"  " SO\0"  " SI\0"
+	"DLE\0"  "DC1\0"  "DC2\0"  "DC3\0"  "DC4\0"  "NAK\0"  "SYN\0"  "ETB\0"
+	"CAN\0"  " EM\0"  "SUB\0"  "ESC\0"  " FS\0"  " GS\0"  " RS\0"  " VS\0"
+	" SP\0"  "  !\0"  "  \"\0" "  #\0"  "  $\0"  "  %\0"  "  &\0"  "  '\0"
+	"  (\0"  "  )\0"  "  *\0"  "  +\0"  "  ,\0"  "  -\0"  "  .\0"  "  /\0"
+	"  0\0"  "  1\0"  "  2\0"  "  3\0"  "  4\0"  "  5\0"  "  6\0"  "  7\0"
+	"  8\0"  "  9\0"  "  :\0"  "  ;\0"  "  <\0"  "  =\0"  "  >\0"  "  ?\0"
+	"  @\0"  "  A\0"  "  B\0"  "  C\0"  "  D\0"  "  E\0"  "  F\0"  "  G\0"
+	"  H\0"  "  I\0"  "  J\0"  "  K\0"  "  L\0"  "  M\0"  "  N\0"  "  O\0"
+	"  P\0"  "  Q\0"  "  R\0"  "  S\0"  "  T\0"  "  U\0"  "  V\0"  "  W\0"
+	"  X\0"  "  Y\0"  "  Z\0"  "  [\0"  "  \\\0" "  ]\0"  "  ^\0"  "  _\0"
+	"  `\0"  "  a\0"  "  b\0"  "  c\0"  "  d\0"  "  e\0"  "  f\0"  "  g\0"
+	"  h\0"  "  i\0"  "  j\0"  "  k\0"  "  l\0"  "  m\0"  "  n\0"  "  o\0"
+	"  p\0"  "  q\0"  "  r\0"  "  s\0"  "  t\0"  "  u\0"  "  v\0"  "  w\0"
+	"  x\0"  "  y\0"  "  z\0"  "  {\0"  "  |\0"  "  }\0"  "  ~\0"  "DEL\0"
+	;
+	
+	int c;
+
+	while ((c = getchar()) != EOF) 
+		printf("%s, %3x\n", &asciiname[4*c], c);
+	return 0;
+}
+
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ vi[K[Kgcc -m32 vt.c -o vt
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ./vt < vt.in > vt.out
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ cat vt.out
+SOH,   1
+STX,   2
+  },  7d
+  ~,  7e
+  a,  61
+  ,,  2c
+  b,  62
+  z,  7a
+  \,  5c
+DEL,  7f
+  Z,  5a
+ NL,   a
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ cat hist.c 
+/* hist.c
+Bob Wilson 09/18/02  */
+
+#include <stdio.h>
+
+int main ()
+{
+#define NBR_ASCII_CODES 128
+
+char asciiname[] = 
+	"NUL\0"  "SOH\0"  "STX\0"  "ETX\0"  "EOT\0"  "ENQ\0"  "ACK\0"  "BEL\0"
+	" BS\0"  " HT\0"  " NL\0"  " VT\0"  " NP\0"  " CR\0"  " SO\0"  " SI\0"
+	"DLE\0"  "DC1\0"  "DC2\0"  "DC3\0"  "DC4\0"  "NAK\0"  "SYN\0"  "ETB\0"
+	"CAN\0"  " EM\0"  "SUB\0"  "ESC\0"  " FS\0"  " GS\0"  " RS\0"  " VS\0"
+	" SP\0"  "  !\0"  "  \"\0" "  #\0"  "  $\0"  "  %\0"  "  &\0"  "  '\0"
+	"  (\0"  "  )\0"  "  *\0"  "  +\0"  "  ,\0"  "  -\0"  "  .\0"  "  /\0"
+	"  0\0"  "  1\0"  "  2\0"  "  3\0"  "  4\0"  "  5\0"  "  6\0"  "  7\0"
+	"  8\0"  "  9\0"  "  :\0"  "  ;\0"  "  <\0"  "  =\0"  "  >\0"  "  ?\0"
+	"  @\0"  "  A\0"  "  B\0"  "  C\0"  "  D\0"  "  E\0"  "  F\0"  "  G\0"
+	"  H\0"  "  I\0"  "  J\0"  "  K\0"  "  L\0"  "  M\0"  "  N\0"  "  O\0"
+	"  P\0"  "  Q\0"  "  R\0"  "  S\0"  "  T\0"  "  U\0"  "  V\0"  "  W\0"
+	"  X\0"  "  Y\0"  "  Z\0"  "  [\0"  "  \\\0" "  ]\0"  "  ^\0"  "  _\0"
+	"  `\0"  "  a\0"  "  b\0"  "  c\0"  "  d\0"  "  e\0"  "  f\0"  "  g\0"
+	"  h\0"  "  i\0"  "  j\0"  "  k\0"  "  l\0"  "  m\0"  "  n\0"  "  o\0"
+	"  p\0"  "  q\0"  "  r\0"  "  s\0"  "  t\0"  "  u\0"  "  v\0"  "  w\0"
+	"  x\0"  "  y\0"  "  z\0"  "  {\0"  "  |\0"  "  }\0"  "  ~\0"  "DEL\0"
+	;
+	
+	int c;
+	int hist[NBR_ASCII_CODES];
+
+	for (c = 0; c<NBR_ASCII_CODES; ++c)
+		hist[c] = 0;
+	while ((c = getchar()) != EOF)
+		++hist[c];
+	printf("DEC  HEX  ASCII  COUNT\n           NAME\n");
+	for (c = 0; c<NBR_ASCII_CODES; ++c)
+	  if (hist[c] != 0)
+            printf("%3d  %3x    %s      %d\n", c, c, &asciiname[4*c], hist[c]);
+	return 0;
+}
+
+
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ gcc -m32 hist.c -o hist
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ./hist < reverse.in > [K[K[K[K[K[K[K[K[K[K[K[K[Ktrim.in
+DEC  HEX  ASCII  COUNT
+           NAME
+  9    9     HT      10
+ 10    a     NL      5
+ 32   20     SP      29
+ 46   2e      .      1
+ 78   4e      N      1
+ 84   54      T      1
+ 97   61      a      3
+ 99   63      c      1
+100   64      d      2
+101   65      e      6
+102   66      f      2
+103   67      g      1
+104   68      h      3
+105   69      i      3
+108   6c      l      2
+109   6d      m      3
+110   6e      n      1
+111   6f      o      8
+112   70      p      1
+114   72      r      2
+115   73      s      1
+116   74      t      6
+119   77      w      1
+121   79      y      1
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ./hist < reverse.in
+DEC  HEX  ASCII  COUNT
+           NAME
+ 10    a     NL      14
+ 32   20     SP      42
+ 33   21      !      1
+ 34   22      "      6
+ 39   27      '      1
+ 44   2c      ,      4
+ 46   2e      .      4
+ 58   3a      :      4
+ 63   3f      ?      1
+ 65   41      A      4
+ 68   44      D      1
+ 69   45      E      2
+ 72   48      H      1
+ 73   49      I      6
+ 77   4d      M      1
+ 78   4e      N      1
+ 97   61      a      18
+ 98   62      b      3
+ 99   63      c      4
+100   64      d      12
+101   65      e      25
+102   66      f      8
+103   67      g      2
+104   68      h      4
+105   69      i      10
+108   6c      l      5
+109   6d      m      5
+110   6e      n      16
+111   6f      o      15
+112   70      p      4
+114   72      r      9
+115   73      s      13
+116   74      t      13
+117   75      u      2
+118   76      v      3
+119   77      w      2
+121   79      y      2
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ ./hist < vt.in
+DEC  HEX  ASCII  COUNT
+           NAME
+  1    1    SOH      1
+  2    2    STX      1
+ 10    a     NL      1
+ 44   2c      ,      1
+ 90   5a      Z      1
+ 92   5c      \      1
+ 97   61      a      1
+ 98   62      b      1
+122   7a      z      1
+125   7d      }      1
+126   7e      ~      1
+127   7f    DEL      1
+xiaohui@itserver6:/courses/cs240/s17/xiaohui/GROUP/hw2/solution$ exit
+exit
+
+Script done on Thu 02 Mar 2017 06:45:13 PM EST
